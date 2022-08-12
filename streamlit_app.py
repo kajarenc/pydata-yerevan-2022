@@ -4,8 +4,7 @@ import streamlit as st
 
 from models import SUPPORTED_MODELS, bytes_to_array, prepare_image
 
-st.set_page_config(layout="wide")
-st.title(":camera: Computer vision app")
+st.title(":camera: Computer vision app!!!")
 
 
 # Let user upload a picture
@@ -28,8 +27,11 @@ with st.sidebar:
 
     if upload_type == "From URL":
         url = st.text_input("Paste URL")
+        headers = {
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36"
+        }
         if url:
-            image_bytes = requests.get(url).content
+            image_bytes = requests.get(url, headers=headers).content
 
     if upload_type == "From webcam":
         camera = st.camera_input("Take a picture!")
@@ -60,7 +62,7 @@ for column_index, model_name in enumerate(SUPPORTED_MODELS.keys()):
         image_array = bytes_to_array(image_bytes)
         image_array = prepare_image(image_array, _model_preprocess=preprocess_input)
         prediction = model.predict(image_array)
-        prediction_df = pd.DataFrame(decode_predictions(prediction, 5)[0])
+        prediction_df = pd.DataFrame(decode_predictions(prediction, 10)[0])
         prediction_df.columns = ["label_id", "label", "probability"]
         st.write(f"Predictions for model {model_name}")
         st.dataframe(prediction_df.sort_values(by="probability", ascending=False))
